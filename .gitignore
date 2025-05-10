@@ -174,3 +174,4 @@ cython_debug/
 .pypirc
 
 *.m
+uq_pce/uqlab/test.ipynb
