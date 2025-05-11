@@ -14,13 +14,13 @@ def compute_psi(
 
     Args
     ---------
-    nominalX (np.ndarray): Training data samples.
-    P (int): Degree of the polynomial.
-    idx_attr_map (dict): Mapping from attribute names to indices.
+    nominalX (np.ndarray) : Training data samples.
+    P (int) : Total Degree Truncation.
+    idx_attr_map (dict) : Mapping from indices to attribute names
 
     Returns
     ---------
-    np.ndarray: Polynomial chaos expansion basis functions
+    np.ndarray : Polynomial chaos expansion basis functions
     """
     # Create alphas containing at most degree P, with sum across dimensions <= P
     alphas = create_alphas(NUM_VARIABLES, P)
