@@ -76,4 +76,40 @@ plt.tick_params(axis='both')
 #plt.ylim(np.min(Yval), np.max(Yval))
 plt.show()
 
+##low-rank approximation
+LRAOpts = {
+    "Type":"Metamodel",
+    "MetaType":"LRA",
+    "Input":Input["Name"],
+    "FullModel":Model["Name"],
+    "Rank":list(range(1,11)),
+    "Degree":2,
+    "ExpDesign":{
+        "NSamples":40
+    }
+}
+LRA = uq.createModel(LRAOpts)
+
+##sensitivity analysis - LRA
+LRASobol = {
+    "Type":"Sensitivity",
+    "Method":"Sobol",
+    "Sobol": {
+        "Order": 2
+    }
+}
+LRASobolAnalysis = uq.createAnalysis(LRASobol)
+uq.print(LRASobolAnalysis)
+
+##sensitivity analysis - PCE
+PCESobol = {
+    "Type":"Sensitivity",
+    "Method":"Sobol",
+    "Sobol": {
+        "Order":2
+    }
+}
+PCESobolAnalysis = uq.createAnalysis(PCESobol)
+uq.print(PCESobolAnalysis)
+
 Session.quit()
