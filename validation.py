@@ -28,10 +28,10 @@ Inputs = {
     'Marginals': [
         {'Type':'Gaussian',
          'Parameters':[196,0.6]},
-        {'Type':'Uniform',
+        {'Type':'Gaussian',
          'Parameters':[0,0]},
-        {'Type':'Uniform',
-         'Parameters':[2,2]},
+        {'Type':'Gaussian',
+         'Parameters':[2,0]},
         {'Type':'Uniform',
          'Parameters':[180,215]},
         {'Type':'Uniform',
