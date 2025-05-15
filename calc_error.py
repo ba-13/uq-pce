@@ -98,7 +98,6 @@ class PCETester:
         plt.gca().xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         plt.legend()
         plt.grid(True)
-        plt.show()
 
     def test_fixed_p_increasing_n(self, p, n_start, n_end, n_steps, N_val):
         # Fix polynomial degree p, increase number of training samples n
@@ -153,7 +152,6 @@ class PCETester:
         ax_inset.set_yscale("log")
         ax_inset.set_title("Inset: n > 1.5×P", fontsize=8)
         ax_inset.grid(True)
-        plt.show()
 
 
 if __name__ == "__main__":
@@ -164,9 +162,9 @@ if __name__ == "__main__":
         NUM_VARIABLES=NUM_VARIABLES,
     )
 
-    N_train = 40  # number of experimental samples
+    N_train = 80  # number of experimental samples
     N_test = 1000  # number of testing samples
-    p_init = 2  # original total degree
+    p_init = 3  # original total degree
     M_init = 4  # number of input parameters
     P_init = comb(M_init + p_init, p_init)  # calculate P
 
@@ -177,3 +175,4 @@ if __name__ == "__main__":
     tester.test_fixed_p_increasing_n(
         p=p_init, n_start=P_init, n_end=4 * P_init, n_steps=10, N_val=N_test
     )
+    plt.show()

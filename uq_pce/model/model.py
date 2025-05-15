@@ -11,6 +11,7 @@ from .distributions import (
     UniformDistribution,
     NormalDistribution,
 )
+from .utils import plot_input_vs_output
 
 seed = 42
 np.random.seed(seed)
@@ -21,10 +22,10 @@ np.random.seed(seed)
 INPUT_DISTRIBUTION: dict[str, Distribution] = {
     "s": NormalDistribution(196, 0.6),
     "t": FixedDistribution(0),
-    "T": FixedDistribution(2),
+    "T": UniformDistribution(2, 2.25),
     "K": UniformDistribution(180, 215),
     "sigma": UniformDistribution(0.2, 0.8),
-    "r": NormalDistribution(0.0427, 0.002),
+    "r": NormalDistribution(0.0427, 0.03),
 }
 
 # Number of non-fixed parameters
@@ -86,4 +87,5 @@ def get_dataset(
     )
     dimension_name_map = {i: name for name, i in name_dimension_map.items()}
 
+    # plot_input_vs_output(inputs, outputs, dimension_name_map, 2)
     return outputs, sample, dimension_name_map
