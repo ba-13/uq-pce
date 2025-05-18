@@ -49,6 +49,14 @@ def cotter(uq,Input):
     CotterAnalysis = uq.createAnalysis(CotterSensOpts)
     uq.print(CotterAnalysis)
 
+def morris(uq,Input,boundaries,cost,factorsamples):
+    MorrisSensOpts = {"Type": "Sensitivity","Method": "Morris"}
+    MorrisSensOpts["Factors"] = {"Boundaries": boundaries}
+    MorrisSensOpts["Morris"] = {"Cost": cost,"FactorSamples":factorsamples}
+    MorrisAnalysis = uq.createAnalysis(MorrisSensOpts)
+    uq.print(MorrisAnalysis)
+    uq.display(MorrisAnalysis);
+
 class SensType(Enum):
     LRA = lra_sobol
     PCE = pce_sobol
