@@ -32,8 +32,8 @@ Inputs = {
          "Type":"Gaussian",
          "Parameters":[0,1e-6]},
         {"Name":"T",
-         "Type":"Gaussian",
-         "Parameters":[2,1e-6]},
+         "Type":"Uniform",
+         "Parameters":[2,2.15]},
         {"Name":"K",
          "Type":"Uniform",
          "Parameters":[180,215]},
@@ -111,7 +111,7 @@ SobolSensOpts = {
     'Type': 'Sensitivity',
     'Method': 'Sobol',
     'Sobol': {
-        'SampleSize': 10000
+        'SampleSize': 1e4
     }
 }
 

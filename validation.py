@@ -1,7 +1,12 @@
 from uqpylab import sessions, display_general, display_util
 import numpy as np
 import matplotlib.pyplot as plt
+from enum import Enum
 #from uq_pce.model import blackscholes
+#from uq_pce.uqlab.base import (init_uqlab, call_option_price,
+#                                put_option_price, ModelType,
+#                                model_inputs, create_pce,
+#                                eval_pce, create_lra)
 
 Token = '54670830aaf970cdc8b7dd7e9015d308665f9096'
 Instance = 'https://uqcloud.ethz.ch'
@@ -30,14 +35,14 @@ Inputs = {
          'Parameters':[196,0.6]},
         {'Type':'Gaussian',
          'Parameters':[0,0]},
-        {'Type':'Gaussian',
-         'Parameters':[2,0]},
+        {'Type':'Uniform',
+         'Parameters':[2,2.15]},
         {'Type':'Uniform',
          'Parameters':[180,215]},
         {'Type':'Uniform',
          'Parameters':[0.2,0.8]},
         {'Type':'Gaussian',
-         'Parameters':[0.0427,0.002]}
+         'Parameters':[0.0427,0.03]}
     ]
 }
 
@@ -50,12 +55,12 @@ MetaOpts = {
     }
 MetaOpts['FullModel'] = Model['Name']
 MetaOpts['Degree'] = 3
-Xval = uq.getSample(N=1e3)
+Xval = uq.getSample(N=1e4)
 Yval = uq.evalModel(Model,Xval)
 
 
 MetaOpts['ExpDesign'] = {
-    'NSamples':40,
+    'NSamples':130,
     'Sampling':'LHS'
 }
 
@@ -63,6 +68,9 @@ PCE_LHS40 = uq.createModel(MetaOpts)
 uq.print(PCE_LHS40)
 Y_LHS40 = uq.evalModel(PCE_LHS40,Xval)
 uq.display(PCE_LHS40)
+
+##model variables
+print(PCE_LHS40['PCE']['Coefficients'])
 
 plt.figure(figsize=(8,8))
 plt.scatter(Yval, Y_LHS40,alpha=0.5)
@@ -85,7 +93,7 @@ LRAOpts = {
     "Rank":list(range(1,11)),
     "Degree":2,
     "ExpDesign":{
-        "NSamples":40
+        "NSamples":130
     }
 }
 LRA = uq.createModel(LRAOpts)
