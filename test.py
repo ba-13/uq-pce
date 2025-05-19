@@ -23,14 +23,14 @@ def train_validate_loop(N_train):
     Y_train, nominalX_train, idx_attr_map = get_dataset(N_train, ModelType.CALL)
     # plot_input_vs_output(nominalX_train, Y_train, idx_attr_map, 2)
 
-    Psi = compute_psi(nominalX_train, P, idx_attr_map)
+    Psi, _ = compute_psi(nominalX_train, P, idx_attr_map)
     coeff, _, _, _ = lstsq(Psi.T, Y_train, lapack_driver="gelsy")  # type: ignore
     Y_surrogate = Psi.T @ coeff
 
     train_rmse = rmse(Y_train, Y_surrogate)
 
     Y_test, nominalX_test, idx_attr_map = get_dataset(N_test, ModelType.CALL)
-    Psi_test = compute_psi(nominalX_test, P, idx_attr_map)
+    Psi_test, _ = compute_psi(nominalX_test, P, idx_attr_map)
     Y_surrogate_test = Psi_test.T @ coeff
 
     test_rmse = rmse(Y_test, Y_surrogate_test)

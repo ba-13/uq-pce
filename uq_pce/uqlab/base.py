@@ -16,8 +16,6 @@ def init_uqlab(Session, seed):
     uq.rng(seed,'twister');
     return uq
 
-#Session.quit()
-
 
 def call_option_price(X: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
     """
@@ -78,11 +76,11 @@ def put_option_price(X: npt.NDArray[np.float64]
 
     return K * np.exp(-r * tau) * stats.norm.cdf(-d2) - s * stats.norm.cdf(-d1)
 
-class ModelType(Enum):
+class ModelTypeUQL(Enum):
     CALL = call_option_price
     PUT = put_option_price
 
-model = ModelType.CALL
+model = ModelTypeUQL.CALL
 
 INPUT_DISTRIBUTION = [
     {"Name":"s","Type":"Gaussian","Parameters":[196, 0.6]},

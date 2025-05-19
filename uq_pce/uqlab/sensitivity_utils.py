@@ -49,13 +49,36 @@ def cotter(uq,Input):
     CotterAnalysis = uq.createAnalysis(CotterSensOpts)
     uq.print(CotterAnalysis)
 
-def morris(uq,Input,boundaries,cost,factorsamples):
+def morris(uq,boundaries,cost,factorsamples):
     MorrisSensOpts = {"Type": "Sensitivity","Method": "Morris"}
     MorrisSensOpts["Factors"] = {"Boundaries": boundaries}
     MorrisSensOpts["Morris"] = {"Cost": cost,"FactorSamples":factorsamples}
     MorrisAnalysis = uq.createAnalysis(MorrisSensOpts)
     uq.print(MorrisAnalysis)
     uq.display(MorrisAnalysis);
+
+def borgonovo(uq,N,Input):
+    Input = Input
+    BorgonovoOpts = {'Type': 'Sensitivity',
+    'Method': 'Borgonovo','Borgonovo': {
+        'SampleSize': N}}
+    BorgonovoAnalysis = uq.createAnalysis(BorgonovoOpts)
+    uq.print(BorgonovoAnalysis)
+
+def sobol_sens(uq,N):
+    SobolSensOpts = {'Type': 'Sensitivity',
+    'Method': 'Sobol','Sobol': {
+        'SampleSize': N}}
+    SobolAnalysis = uq.createAnalysis(SobolSensOpts)
+    uq.print(SobolAnalysis)
+
+def ancova_sens(uq,N):
+    ANCOVAOpts = {'Type': 'Sensitivity',
+    'Method': 'ANCOVA','ANCOVA': {
+        'SampleSize': N}}
+    ANCOVAAnalysis = uq.createAnalysis(ANCOVAOpts)
+    uq.print(ANCOVAAnalysis)
+
 
 class SensType(Enum):
     LRA = lra_sobol
