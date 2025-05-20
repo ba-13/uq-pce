@@ -127,3 +127,16 @@ def create_lra(uq, expN, Model, Input, degree):
     }
     LRA = uq.createModel(LRAOpts)
     return LRA
+
+def kriging(uq, Model, N, metatype, mode, corrtype, sampling, solver, expN, degree):
+    X = uq.getSample(N=N)
+    Y = uq.evalModel(Model, X)
+    MetaOpts = {'Type':'Metamodel', 'MetaType':metatype,
+                'Mode':mode}
+    MetaOpts['ExpDesign'] = {'NSamples':expN,
+                             'Sampling':sampling}
+    MetaOpts['PCE'] = {'Method':solver,'Degree':degree}
+    MetaOpts['Kriging'] = {'Corr':{'Family':corrtype}}
+    KrigingModel = uq.createModel(MetaOpts)
+    uq.print(KrigingModel)
+    return KrigingModel

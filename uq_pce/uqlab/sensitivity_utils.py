@@ -13,7 +13,8 @@ def lra_sobol(uq,degree):
     uq.print(LRA_SA)
     uq.display(LRA_SA)
 
-def pce_sobol(uq,degree):
+def pce_sobol(uq,degree,PCE):
+    PCE = PCE
     PCESobol={"Type":"Sensitivity","Method":"Sobol",
         "Sobol":{"Order":degree}}
     PCE_SA = uq.createAnalysis(PCESobol)
@@ -65,10 +66,10 @@ def borgonovo(uq,N,Input):
     BorgonovoAnalysis = uq.createAnalysis(BorgonovoOpts)
     uq.print(BorgonovoAnalysis)
 
-def sobol_sens(uq,N):
+def sobol_sens(uq,N,degree):
     SobolSensOpts = {'Type': 'Sensitivity',
     'Method': 'Sobol','Sobol': {
-        'SampleSize': N}}
+        'SampleSize': N,'Order':degree}}
     SobolAnalysis = uq.createAnalysis(SobolSensOpts)
     uq.print(SobolAnalysis)
 

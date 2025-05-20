@@ -1,78 +1,35 @@
 from uqpylab import sessions, display_general, display_util
 import numpy as np
 import matplotlib.pyplot as plt
+from uq_pce.uqlab.base import (init_uqlab, call_option_price, 
+                               put_option_price, ModelTypeUQL, 
+                               model_inputs, create_pce, 
+                               eval_pce, create_lra, kriging)
 
-Token = '54670830aaf970cdc8b7dd7e9015d308665f9096'
 Instance = 'https://uqcloud.ethz.ch'
+Token = '54670830aaf970cdc8b7dd7e9015d308665f9096'
 
 Session  = sessions.cloud(host=Instance,token=Token)
-uq = Session.cli
-Session.reset()
+degree = 3
 
-seed = 42
-uq.rng(seed,'twister');
+uq = init_uqlab(Session=Session,seed=42)
+Model, Input = model_inputs(uq,ModelTypeUQL.CALL)
+PCE, _ = create_pce(uq,130,'LHS','OLS',Model,degree)
+LRA = create_lra(uq,1e4,Model,Input,degree)
+N = 1e4
 
-ModelType = 'CALL'
-
-if ModelType == 'CALL':
-    ModelOpts = {'Type':'Model','ModelFun':'uq_pce.uqlab.blackscholes_vectorized.call_option_price'}
-elif ModelType == 'PUT':
-    ModelOpts = {'Type':'Model','ModelFun':'uq_pce.model.blackscholes_vectorized.put_option_price'}
-else:
-    raise NotImplementedError('Select model type: PUT or CALL')
-
-Model = uq.createModel(ModelOpts)
-
-Inputs = {
-    'Marginals': [
-        {'Type':'Gaussian',
-         'Parameters':[196,0.6]},
-        {'Type':'Uniform',
-         'Parameters':[0,0]},
-        {'Type':'Uniform',
-         'Parameters':[2,2]},
-        {'Type':'Uniform',
-         'Parameters':[180,215]},
-        {'Type':'Uniform',
-         'Parameters':[0.2,0.8]},
-        {'Type':'Gaussian',
-         'Parameters':[0.0427,0.002]}
-    ]
-}
-
-Input = uq.createInput(Inputs)
-
-X = uq.getSample(N=1e3)
+X = uq.getSample(N=N)
 Y = uq.evalModel(Model,X)
-                 
-MetaOpts = {
-    "Type": "Metamodel",
-    "MetaType": "Kriging"
-}
 
+KrigingMatern = kriging(uq, Model, N,'PCK', 'Sequential', 'Gaussian', 'LHS', 'LARS', 130, 3) 
+KrigingLinear = kriging(uq, Model, N,'PCK', 'Sequential', 'Linear', 'LHS', 'LARS', 130, 3) 
+KrigingExp = kriging(uq, Model, N,'PCK', 'Sequential', 'Exponential', 'LHS', 'LARS', 130, 3) 
+#available metatypes: 'PCK', 'Kriging'
+#available modes: 'Sequential', 'Optimal'
+#available solvers: 'OLS', 'LARS', 'OMP'
+#available correlation families: 'Gaussian', 'Linear', 'Exponential'
 
-
-MetaOpts["ExpDesign"] = {
-    'NSamples':40,
-    'Sampling':'LHS'
-}
-
-KrigingMatern = uq.createModel(MetaOpts)
-
-uq.print(KrigingMatern)
-
-MetaOpts['Corr'] = {
-    "Family": "Linear"
-}
-KrigingLinear = uq.createModel(MetaOpts)
-
-uq.print(KrigingLinear)
-
-MetaOpts['Corr']['Family'] = 'Exponential'
-KrigingExp = uq.createModel(MetaOpts)
-uq.print(KrigingExp)
-
-Xval = uq.getSample(N=1e3, Method='LHS')
+Xval = uq.getSample(N=1e4, Method='LHS')
 Yval = uq.evalModel(Model, Xval)
 
 [YMeanMat,YVarMat] = uq.evalModel(KrigingMatern, Xval, nargout=2)
@@ -80,8 +37,8 @@ Yval = uq.evalModel(Model, Xval)
 [YMeanExp,YVarExp] = uq.evalModel(KrigingExp, Xval, nargout=2)
 
 plt.plot(Xval, YMeanMat,'-')
-plt.plot(Xval, YMeanLin,'-')
-plt.plot(Xval, YMeanExp, '--')
+#plt.plot(Xval, YMeanLin,'-')
+#plt.plot(Xval, YMeanExp, '--')
 #plt.plot(Xval, Yval, '-k')
 plt.plot(X, Y, 'ko',markersize=2)
 

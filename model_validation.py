@@ -86,6 +86,7 @@ plt.grid(True)
 plt.tick_params(axis='both')
 plt.show()
 
-LRA = create_lra(uq,1e4,Model,Input,degree)
+#low-rank approximation
+#LRA = create_lra(uq,1e4,Model,Input,degree)
 
 Session.quit()
