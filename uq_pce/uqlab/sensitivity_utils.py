@@ -19,7 +19,6 @@ def pce_sobol(uq,degree,PCE):
         "Sobol":{"Order":degree}}
     PCE_SA = uq.createAnalysis(PCESobol)
     uq.print(PCE_SA)
-    uq.display(PCE_SA)
 
 def corr_sens(uq,N,Input):
     Input = Input
@@ -40,37 +39,37 @@ def perturbation(uq,Input):
     Input = Input
     PerturbationSensOpts = {'Type': 'Sensitivity',
     'Method': 'Perturbation'}
+    PerturbationSensOpts['Gradient']={'Method':'Centered'}
     PerturbationAnalysis = uq.createAnalysis(PerturbationSensOpts)
     uq.print(PerturbationAnalysis)
 
-def cotter(uq,Input):
-    Input = Input
+def cotter(uq):
     CotterSensOpts = {'Type': 'Sensitivity',
     'Method': 'Cotter'}
     CotterAnalysis = uq.createAnalysis(CotterSensOpts)
     uq.print(CotterAnalysis)
+    uq.display(CotterAnalysis);
 
-def morris(uq,boundaries,cost,factorsamples):
+def morris(uq,cost,factorsamples):
     MorrisSensOpts = {"Type": "Sensitivity","Method": "Morris"}
-    MorrisSensOpts["Factors"] = {"Boundaries": boundaries}
     MorrisSensOpts["Morris"] = {"Cost": cost,"FactorSamples":factorsamples}
     MorrisAnalysis = uq.createAnalysis(MorrisSensOpts)
     uq.print(MorrisAnalysis)
     uq.display(MorrisAnalysis);
 
-def borgonovo(uq,N,Input):
-    Input = Input
+def borgonovo(uq,N):
     BorgonovoOpts = {'Type': 'Sensitivity',
     'Method': 'Borgonovo','Borgonovo': {
         'SampleSize': N}}
     BorgonovoAnalysis = uq.createAnalysis(BorgonovoOpts)
     uq.print(BorgonovoAnalysis)
 
-def sobol_sens(uq,N,degree):
+def sobol_sens(uq,N,degree,sampling):
     SobolSensOpts = {'Type': 'Sensitivity',
     'Method': 'Sobol','Sobol': {
         'SampleSize': N,'Order':degree}}
     SobolAnalysis = uq.createAnalysis(SobolSensOpts)
+    SobolSensOpts['Sobol']['Sampling'] = sampling
     uq.print(SobolAnalysis)
 
 def ancova_sens(uq,N):

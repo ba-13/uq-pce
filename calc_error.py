@@ -19,7 +19,7 @@ class PCETester:
 
     def compute_errors(self, X_train, Y_train, X_test, Y_test, P, idx_attr_map):
         # Compute Psi matrix for training data
-        Psi = self.compute_psi(X_train, P, idx_attr_map)
+        Psi,_ = self.compute_psi(X_train, P, idx_attr_map)
         # Solve least-squares problem to obtain coefficients
         coeff, _, _, _ = lstsq(Psi.T, Y_train, lapack_driver="gelsy")  # type: ignore
         Y_surrogate = Psi.T @ coeff
@@ -28,7 +28,7 @@ class PCETester:
         e_emp = np.mean((Y_train - Y_surrogate) ** 2) / np.var(Y_train)
 
         # Compute surrogate prediction for test data
-        Psi_test = self.compute_psi(X_test, P, idx_attr_map)
+        Psi_test,_ = self.compute_psi(X_test, P, idx_attr_map)
         Y_surrogate_test = Psi_test.T @ coeff
         # Compute relative validation error
         e_val = np.mean((Y_test - Y_surrogate_test) ** 2) / np.var(Y_test)
@@ -46,10 +46,10 @@ class PCETester:
         for i in range(len(Y_train)):
             X_train_loo = np.delete(X_train, i, axis=0)
             Y_train_loo = np.delete(Y_train, i, axis=0)
-            Psi_loo = self.compute_psi(X_train_loo, P, idx_attr_map)
+            Psi_loo,_ = self.compute_psi(X_train_loo, P, idx_attr_map)
             coeff_loo, _, _, _ = lstsq(Psi_loo.T, Y_train_loo, lapack_driver="gelsy")  # type: ignore
 
-            psi_i = compute_psi(X_train[i : i + 1, :], P, idx_attr_map)
+            psi_i,_ = compute_psi(X_train[i : i + 1, :], P, idx_attr_map)
             Y_pred_i = psi_i.T @ coeff_loo
             e_loo_l += ((Y_train[i] - Y_pred_i) ** 2).item()
 

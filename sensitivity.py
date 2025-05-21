@@ -20,43 +20,24 @@ degree = 3
 uq = init_uqlab(Session=Session,seed=42)
 Model, Input = model_inputs(uq,ModelTypeUQL.CALL)
 PCE, _ = create_pce(uq,130,'LHS','OLS',Model,degree)
-LRA = create_lra(uq,1e4,Model,Input,degree)
 N = 1e4
+
+## UN-COMMENT DESIRED METHOD TO RUN SENSITIVITY ANALYSIS ##
+# For Cotter and Borgonovo: 
+# Non-Zero Standard Deviation for Variable 't' Recommended
 
 #corr_sens(uq,N,Input)
 #src_sens(uq,N,Input)
 #perturbation(uq,Input)
-##cotter(uq,Input)
-##morris(uq,0.5,N,N)
-##borgonovo(uq,N,Input)
-#sobol_sens(uq,N,degree)
+#cotter(uq) ##only works with non-zero 't' input stDev!
+#morris(uq,N,N)
+#borgonovo(uq,N) ##only works with non-zero 't' input stDev!
+#sobol_sens(uq,N,degree,'LHS') #sampling options: 'LHS', 'MC'
 pce_sobol(uq,degree,PCE)
-##lra_sobol(uq,degree=degree)
-##ancova_sens(uq,N)
-
-#SRCAnalysis = uq.createAnalysis(SRCSensOpts)
-#uq.print(SRCAnalysis)
-
-#PerturbationAnalysis = uq.createAnalysis(PerturbationSensOpts)
-#uq.print(PerturbationAnalysis)
-
-#CotterAnalysis = uq.createAnalysis(CotterSensOpts)
-#uq.print(CotterAnalysis)
-
-#MorrisAnalysis = uq.createAnalysis(MorrisSensOpts)
-#uq.print(MorrisAnalysis)
-#uq.display(MorrisAnalysis);
-
-#BorgonovoAnalysis = uq.createAnalysis(BorgonovoOpts)
-#uq.print(BorgonovoAnalysis)
-
-#SobolAnalysis = uq.createAnalysis(SobolSensOpts)
-#uq.print(SobolAnalysis)
-
-#ANCOVAAnalysis = uq.createAnalysis(ANCOVAOpts)
-#uq.print(ANCOVAAnalysis)
-
-#KucherenkoAnalysis = uq.createAnalysis(KucherenkoSensOpts)
-#uq.print(KucherenkoAnalysis)
+#ancova_sens(uq,200)
 
 Session.quit()
+
+## low-rank approximation sobol indices (not used)
+#LRA = create_lra(uq,1e4,Model,Input,degree)
+#lra_sobol(uq,degree=degree)

@@ -84,7 +84,7 @@ model = ModelTypeUQL.CALL
 
 INPUT_DISTRIBUTION = [
     {"Name":"s","Type":"Gaussian","Parameters":[196, 0.6]},
-    {"Name":"t","Type":"Gaussian","Parameters":[0, 0]},
+    {"Name":"t","Type":"Gaussian","Parameters":[0, 1e-5]},
     {"Name":"T","Type":"Uniform","Parameters":[2, 2.25]},
     {"Name":"K", "Type":"Uniform","Parameters":[180, 215]},
     {"Name":"sigma","Type":"Uniform","Parameters":[0.2, 0.8]},
