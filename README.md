@@ -4,6 +4,7 @@
 
 While in the current directory, install the package `uq_pce`
 ```
+pip install -r requirements.txt
 pip install -e .
 ```
 
@@ -17,5 +18,5 @@ You can find all graphs related to the project within [here](./graphs/).
 
 1. `calc_error.py` performs Global Error calculation and graph plotting.
 2. `relative_error.py` does relative error estimation and graph plotting.
-3. `kriging.py`, `pc_kriging.py`, `sensitivity.py` deals with UQPyLab.
-4. `UQ_project_merged.pdf` is the report of the mini-project.
+3. `model_validation.py` deals with UQPyLab.
+4. `report.pdf` is the report of the mini-project (contains declaration of originality).
