@@ -42,7 +42,7 @@ def compute_psi(
         for i in range(NUM_VARIABLES):
             Psi[alpha_idx] *= all_poly[i, alpha[i]]
 
-    return Psi
+    return Psi, alphas
 
 
 def pce_get_coefficients(N_train: int, P: int) -> npt.NDArray[np.float64]:
@@ -61,7 +61,7 @@ def pce_get_coefficients(N_train: int, P: int) -> npt.NDArray[np.float64]:
     # Generate training data
     Y_train, nominalX_train, idx_attr_map = get_dataset(N_train, ModelType.CALL)
 
-    Psi = compute_psi(nominalX_train, P, idx_attr_map)
+    Psi,_ = compute_psi(nominalX_train, P, idx_attr_map)
 
     coeff, _, _, _ = lstsq(Psi.T, Y_train, lapack_driver="gelsy")  # type: ignore
     assert isinstance(coeff, np.ndarray), "Coefficient is not a numpy array."

@@ -175,3 +175,6 @@ cython_debug/
 
 *.m
 uq_pce/uqlab/test.ipynb
+validation.py
+kriging.py
+pc_kriging.py

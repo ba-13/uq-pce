@@ -14,9 +14,7 @@ def init_uqlab(Session, seed):
     uq = Session.cli
     Session.reset()
     uq.rng(seed,'twister');
-    return
-
-Session.quit()
+    return uq
 
 
 def call_option_price(X: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
@@ -78,44 +76,46 @@ def put_option_price(X: npt.NDArray[np.float64]
 
     return K * np.exp(-r * tau) * stats.norm.cdf(-d2) - s * stats.norm.cdf(-d1)
 
-class ModelType(Enum):
+class ModelTypeUQL(Enum):
     CALL = call_option_price
     PUT = put_option_price
 
-model = ModelType.CALL
+model = ModelTypeUQL.CALL
 
 INPUT_DISTRIBUTION = [
     {"Name":"s","Type":"Gaussian","Parameters":[196, 0.6]},
-    {"Name":"t","Type":"Gaussian","Parameters":[0, 0]},
-    {"Name":"T","Type":"Gaussian","Parameters":[2, 0]},
+    {"Name":"t","Type":"Gaussian","Parameters":[0, 1e-5]},
+    {"Name":"T","Type":"Uniform","Parameters":[2, 2.25]},
     {"Name":"K", "Type":"Uniform","Parameters":[180, 215]},
     {"Name":"sigma","Type":"Uniform","Parameters":[0.2, 0.8]},
-    {"Name":"r","Type":"Gaussian","Parameters":[0.0427, 0.002]},
+    {"Name":"r","Type":"Gaussian","Parameters":[0.0427, 0.03]},
     ]
 
-def model_inputs(ModelType):
-    ModelOpts = {"Type":"Model","ModelFun":"model"}
+def model_inputs(uq,Model):
+    modelname = "uq_pce.uqlab.base."+str(model).split('function ')[1].split(' at')[0]
+    ModelOpts = {"Type":"Model","ModelFun":modelname}
     Model = uq.createModel(ModelOpts)
     Inputs = {"Marginals": INPUT_DISTRIBUTION}
     Input = uq.createInput(Inputs)
-    return Model, Input
+    return [Model, Input]
 
-def create_pce(expN,Sampling, Method,Model,degree):
-    MetaOpts = {'Type':'Metamodel','MetaType':'PCE',"Sampling":Sampling}
-    PCE = uq.createModel(MetaOpts)
+def create_pce(uq,expN,Sampling, Method,Model,degree):
+    MetaOpts = {'Type':'Metamodel','MetaType':'PCE','Method':Method}
     MetaOpts['FullModel'] = Model['Name']
     MetaOpts['Degree'] = degree
-    MetaOpts['ExpDesign'] = {'NSamples':expN, 'Sampling': 'Method'}
+    MetaOpts['ExpDesign'] = {'NSamples':expN, 'Sampling': Sampling}
+    PCE = uq.createModel(MetaOpts)
     PCESobol = {"Type":"Sensitivity","Method":"Sobol","Sobol":{"Order":degree}}
     PCESobolAnalysis = uq.createAnalysis(PCESobol)
     return [PCE, PCESobolAnalysis]
 
-def eval_pce(N,Model,PCE):
-    Xval = uq.getSample(N=N)
+def eval_pce(uq,expN,Model,PCEModel):
+    Xval = uq.getSample(N=expN)
     Yval = uq.evalModel(Model,Xval)
-    return Yval
+    YPCE = uq.evalModel(PCEModel,Xval)
+    return Yval, YPCE
 
-def create_lra(expN, Model, Input, degree):
+def create_lra(uq, expN, Model, Input, degree):
     LRAOpts = {
         "Type":"Metamodel",
         "MetaType":"LRA",
@@ -127,3 +127,16 @@ def create_lra(expN, Model, Input, degree):
     }
     LRA = uq.createModel(LRAOpts)
     return LRA
+
+def kriging(uq, Model, N, metatype, mode, corrtype, sampling, solver, expN, degree):
+    X = uq.getSample(N=N)
+    Y = uq.evalModel(Model, X)
+    MetaOpts = {'Type':'Metamodel', 'MetaType':metatype,
+                'Mode':mode}
+    MetaOpts['ExpDesign'] = {'NSamples':expN,
+                             'Sampling':sampling}
+    MetaOpts['PCE'] = {'Method':solver,'Degree':degree}
+    MetaOpts['Kriging'] = {'Corr':{'Family':corrtype}}
+    KrigingModel = uq.createModel(MetaOpts)
+    uq.print(KrigingModel)
+    return KrigingModel

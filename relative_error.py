@@ -27,7 +27,7 @@ while True:
     P = alphas.shape[0]
     if P > N:
         break
-    Psi = compute_psi(nominalX, p, idx_attr_map)
+    Psi,_ = compute_psi(nominalX, p, idx_attr_map)
     # Solve least-squares problem to obtain coefficients
     coeff, _, _, _ = lstsq(Psi.T, Y, lapack_driver="gelsy")  # type: ignore
     Y_surrogate = Psi.T @ coeff
@@ -60,7 +60,7 @@ rerror_means = []
 rerror_vars = []
 for N in Ns:
     Y, nominalX, idx_attr_map = get_dataset(N, ModelType.CALL)
-    Psi = compute_psi(nominalX, p, idx_attr_map)
+    Psi,_ = compute_psi(nominalX, p, idx_attr_map)
     coeff, _, _, _ = lstsq(Psi.T, Y, lapack_driver="gelsy")  # type: ignore
     Y_surrogate = Psi.T @ coeff
     model_mean = coeff[0]
